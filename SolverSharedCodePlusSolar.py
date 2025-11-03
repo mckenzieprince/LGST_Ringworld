@@ -272,6 +272,35 @@ def compute_motion(initial_position, initial_velocity, radius, gravity, t_max, d
     # Return the final position, final velocity, and the full solution
     return final_position.tolist(), final_velocity.tolist(), solution
 
+def calculate_floating_potentials():
+    """ 
+    Calculates the floating potential (V_f) of the ringworld surface for three electron temperatures (typical, lower, upper).
+
+    Parameters:
+    T_e: Electron temperatures (K) - typical, lower, and upper bounds
+    m_i: ion mass; defaults to proton mass (kg)
+    m_e: Electron mass (kg)
+    k: Boltzmann constant (J/K)
+    e: elementary charge (C)
+
+    Returns:
+    list: Floating potentials (V) for each T_e
+
+    """
+    #Physical constants
+    m_i = 1.6726E-27
+    m_e = 9.10938356E-31
+    k = 1.380649E-23
+    e = 1.602176634E-19
+
+    #Electron temperatures - typical, lower, and upper bounds
+    T_e = np.array([141000, 103000, 179000])
+
+    #Floating potential forumla
+    V_f = -(k * T_e / e) * np.log(np.sqrt(m_i / (2 * np.pi * m_e)))
+    
+    #Returns list of floating potential values
+    return V_f.tolist()
 
 def calculate_acceleration_from_lorentz_force(particle_charge: float, particle_velocity,particle_mass:float,magnetic_field, electric_field):
     """
