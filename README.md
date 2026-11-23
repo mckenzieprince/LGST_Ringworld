@@ -1,6 +1,6 @@
 # Ringworld Particle Dynamics Simulation
-**Version 1.1**  
-**Last Updated: August 25, 2025**
+**Version 1.2**  
+**Last Updated: November 23, 2026**
 
 ===============================================================================
 
@@ -37,7 +37,8 @@ pseudoforces dominate the particle kinematics.
 **Features**:
 - Position vectors within defined spatial domains
 - Velocity vectors from Maxwell-Boltzmann distribution
-- Configurable molecular properties (species, wieght, charge)
+- Configurable molecular properties (species, weight, charge)
+- Molecular species selection weighted by  atmospheric number density
 
 ### StochasticInputRK45Solver.py
 **Purpose**: Primary execution module  
@@ -46,6 +47,7 @@ pseudoforces dominate the particle kinematics.
 - Classification of escape and recapture events
 - Statistical analysis of ensemble behavior
 - Data visualization and persistence
+- Optional atmospheric lifetime and summary plots
 
 ### SolverSharedCodePlusSolar.py
 **Purpose**: Physics engine  
@@ -55,6 +57,7 @@ pseudoforces dominate the particle kinematics.
 - Coriolis and centrifugal force calculations
 - Optional heliocentric gravitational field
 - Lorentz force calculation
+- Solar wind velocity and electromagnetic field calculations
 
 ### TrajectoryClassification.py
 **Purpose**: Analyzes trajectories against boundary conditions  
@@ -120,6 +123,7 @@ pseudoforces dominate the particle kinematics.
    - Summary statistics shown after completion (escape/recapture percentages)
    - Trajectory plots generated (if show_plots=True)
    - Results file created with timestamp (particle_data_YYYYMMDD_HHMMSS.xlsx)
+   - Optional PDF plots showing particle classifications and estimated atmospheric lifetime over simulation time
 
 3. **Output files**:
    - Excel spreadsheet containing:
@@ -138,12 +142,11 @@ pseudoforces dominate the particle kinematics.
    - `t_max`: Simulation duration
    - `dt`: Time step size
    - `num_particles`: Number of particles to simulate
-   - `comp_list`: Composition of relivant atmosphere
+   - `comp_list`: Composition of relevant atmosphere
 
 ### Atmospheric Leak Rate Analysis
 
-The leak rate analysis is integrated into the main simulation and runs
-automatically after particle processing completes.
+The leak rate analysis is integrated into the main simulation and can be enabled through the configuration parameters.
 
 ### Verification Tools ###
 **Mullis**
@@ -193,8 +196,9 @@ python tester-chambers.py
 | gravity | Gravitational acceleration | m/s² |
 | save_results | Data persistence control | bool |
 | show_plots | Visualization toggle | bool |
-| comp_list | Atmoshere Composition | [(String,kg,C,n/m^3)] |
+| comp_list | Atmosphere composition | [(String,kg,C,n/m^3)] |
 | find_leak_rate | Use Leak Rate code toggle | bool |
+| save_summary_plots | Save particle outcome and lifetime plots | bool |
 
 ### TrajectoryClassification.py
 | Parameter | Description | Units |
@@ -216,7 +220,7 @@ python tester-chambers.py
 ### SolverSharedCodePlusSolar.py
 | Parameter | Description | Units |
 |-----------|-------------|-------|
-| G_UNIVERSAL | Gravitational constant | m³/kg·s² |
+| G_UNIVERSAL (G) | Gravitational constant | m³/kg·s² |
 | solar_mu | Heliocentric parameter | m³/s² |
 | rtol, atol | Integration tolerance | - |
 | omega | Angular velocity vector | rad/s |
@@ -245,7 +249,7 @@ python tester-chambers.py
 4. **Boundary Dynamics**: Classification based on geometric thresholds
 
 5. **Atmospheric Leak Rate Model**:
-   - Escape Fraction: f_escape = N_escaped / N_recaptured
+   - Escape-to-Recapture Ratio: f_escape = N_escaped / N_recaptured
    - Mean Free Path: λ = (σ·n₀)⁻¹, where σ = π·d²/4
    - Scale Height: h_s = k·T₀/(m·g)
    - Exobase Altitude: alt = h_s·ln(h_s/λ)
